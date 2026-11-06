@@ -1,4 +1,4 @@
-# Get-IntuneApps
+# Export-IntuneApps
 
 PowerShell module for exporting the Intune app inventory from Microsoft Graph
 to a CSV file. The export includes app metadata, assignments with resolved
@@ -26,7 +26,7 @@ the relevant Intune data.
 From the repository directory, import the module manifest:
 
 ```powershell
-Import-Module .\Get-IntuneApps.psd1
+Import-Module .\Export-IntuneApps.psd1
 ```
 
 ## Usage

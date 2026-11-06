@@ -1,5 +1,5 @@
 @{
-    RootModule        = 'Get-IntuneApps.psm1'
+    RootModule        = 'Export-IntuneApps.psm1'
     ModuleVersion     = '1.0.8'
     GUID              = '13e3556a-006d-47ea-9ba7-4e8f6407c76d'
     Author            = 'Thomas Hoins'
