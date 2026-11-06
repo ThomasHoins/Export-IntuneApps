@@ -21,7 +21,7 @@
     PrivateData       = @{
         PSData = @{
             Tags       = @('Intune', 'MicrosoftGraph', 'CSV', 'Applications')
-            ProjectUri = 'https://github.com/ThomasHoins/Get-IntuneApps'
+            ProjectUri = 'https://github.com/ThomasHoins/Export-IntuneApps'
             ReleaseNotes = 'Packaged the exporter as a PowerShell module and added CSV path and WhatIf support.'
         }
     }
