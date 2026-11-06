@@ -69,6 +69,11 @@ function Export-IntuneApps
         return
     }
 
+    if (-not $PSBoundParameters.ContainsKey('InformationAction'))
+    {
+        $InformationPreference = 'Continue'
+    }
+
     $Scopes = @(
         'DeviceManagementApps.Read.All'
         'DeviceManagementConfiguration.Read.All'
@@ -77,7 +82,7 @@ function Export-IntuneApps
 
     Connect-MgGraph -Scopes $Scopes -NoWelcome -ErrorAction Stop | Out-Null
 
-    Write-Verbose 'Reading groups from Microsoft Graph.'
+    Write-Information 'Reading groups from Microsoft Graph.'
 
     $GroupCache = @{}
     $Groups = Get-GraphCollection -Uri 'https://graph.microsoft.com/v1.0/groups?$select=id,displayName'
@@ -87,23 +92,31 @@ function Export-IntuneApps
         $GroupCache[$Group.id] = $Group.displayName
     }
 
-    Write-Verbose "Cached $($GroupCache.Count) groups."
-    Write-Verbose 'Reading applications from Microsoft Graph.'
+    Write-Information "Cached $($GroupCache.Count) groups."
+    Write-Information 'Reading applications from Microsoft Graph.'
 
     $Apps = Get-GraphCollection -Uri 'https://graph.microsoft.com/beta/deviceAppManagement/mobileApps?$expand=assignments'
     $Result = [System.Collections.Generic.List[object]]::new()
+    $AppCount = 0
 
     foreach ($App in $Apps)
     {
         $AppType = $App.'@odata.type'
-
+        $AppCount++
+        $PercentComplete = [int](100 * $AppCount / $Apps.Count)
+        Write-Progress `
+            -Id 1 `
+            -Activity 'Exporting Intune applications' `
+            -Status "Processing app $AppCount of $($Apps.Count): $($App.displayName)" `
+            -PercentComplete $PercentComplete
         switch -Wildcard ($AppType)
         {
             '*win32LobApp*' { $AppTypeName = 'Win32' }
             '*windowsStoreApp*' { $AppTypeName = 'Store App' }
             '*windowsMicrosoftEdgeApp*' { $AppTypeName = 'Edge' }
             '*webApp*' { $AppTypeName = 'Web Link' }
-            '*officeSuiteApp*' { $AppTypeName = 'Microsoft 365 Apps' }
+            '*officeSuiteApp*' { $AppTypeName = 'Microsoft 3
+            65 Apps' }
             default { $AppTypeName = $AppType }
         }
 
@@ -178,6 +191,8 @@ function Export-IntuneApps
             AppId                = $App.id
         })
     }
+
+    Write-Progress -Id 1 -Activity 'Exporting Intune applications' -Completed
 
     $ResolvedPath = [System.IO.Path]::GetFullPath($Path)
     $Result |
